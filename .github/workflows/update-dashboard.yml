@@ -43,4 +43,10 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add docs/index.html
           git diff --quiet --cached || git commit -m "Auto-update dashboard $(date -u +%Y-%m-%d)"
-          git push
+          # Retry on push rejection (e.g. a concurrent run updated main first)
+          for i in 1 2 3 4 5; do
+            git push && break
+            git fetch origin main
+            git rebase origin/main
+            sleep $((RANDOM % 10 + 1))
+          done
