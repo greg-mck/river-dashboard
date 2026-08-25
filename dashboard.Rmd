@@ -1,0 +1,88 @@
+---
+title: "River Discharge Dashboard"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+    theme: cosmo
+---
+
+```{r global, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+options(knitr.duplicate.label = "allow")
+
+library(flexdashboard)
+library(plotly)
+library(dplyr)
+
+source("R/gage_config.R")
+source("R/fetch_discharge.R")
+source("R/fetch_snowpack.R")
+source("R/plot_helpers.R")
+
+# Fetch everything once up front (one NWIS/SNOTEL round-trip per gage/station,
+# not per chart) and cache SNOTEL pulls since several gages share a station.
+gage_data <- lapply(seq_len(nrow(gage_config)), function(i) {
+  gage <- gage_config[i, ]
+  daily <- fetch_daily_discharge(gage$site_no)
+  stats <- fetch_daily_stats(gage$site_no)
+  cc <- current_conditions(daily, stats)
+  list(gage = gage, daily = daily, stats = stats, cc = cc)
+})
+
+snotel_cache <- new.env()
+fetch_snowpack_cached <- function(snotel_id) {
+  key <- as.character(snotel_id)
+  if (is.null(snotel_cache[[key]])) {
+    snotel_cache[[key]] <- tryCatch(fetch_snowpack(snotel_id), error = function(e) NULL)
+  }
+  snotel_cache[[key]]
+}
+```
+
+Overview
+=======================================================================
+
+Row {data-height=100}
+-----------------------------------------------------------------------
+
+### Dashboard last updated
+
+```{r}
+valueBox(format(Sys.time(), "%Y-%m-%d %H:%M %Z"), icon = "fa-clock", color = "primary")
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Current conditions across all gages
+
+```{r}
+overview <- do.call(rbind, lapply(gage_data, function(x) {
+  data.frame(
+    Gage = x$gage$common_name,
+    Type = ifelse(x$gage$is_tributary, "Tributary", "Mainstem"),
+    `As of` = as.character(x$cc$as_of),
+    `Q (cfs)` = round(x$cc$q_cfs, 1),
+    `% of normal` = ifelse(is.na(x$cc$pct_of_normal), NA, paste0(x$cc$pct_of_normal, "%")),
+    check.names = FALSE
+  )
+}))
+knitr::kable(overview)
+```
+
+```{r gage-pages, include=FALSE}
+pages <- lapply(gage_data, function(x) {
+  gage <- x$gage
+  daily <- x$daily
+  stats <- x$stats
+  cc <- x$cc
+  swe <- fetch_snowpack_cached(gage$snotel_id)
+  swe_cc <- if (!is.null(swe)) snowpack_current_vs_normal(swe) else NULL
+  knitr::knit_child("_gage_page.Rmd", envir = environment(), quiet = TRUE)
+})
+```
+
+```{r render-pages, results='asis', echo=FALSE}
+cat(paste(unlist(pages), collapse = '\n'))
+```

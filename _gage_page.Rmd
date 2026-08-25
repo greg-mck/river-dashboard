@@ -1,0 +1,84 @@
+
+<!-- Child template rendered once per row of gage_config.R via knit_child().
+     Variables (gage, daily, stats, cc, swe, swe_cc) are supplied by the
+     parent chunk's environment. Do not knit this file directly. -->
+
+`r gage$common_name`
+=======================================================================
+
+Row {data-height=120}
+-----------------------------------------------------------------------
+
+### Current discharge
+
+```{r}
+valueBox(paste(format(round(cc$q_cfs), big.mark = ","), "cfs"),
+         caption = paste("as of", cc$as_of), icon = "fa-water", color = "primary")
+```
+
+### % of normal for today
+
+```{r}
+pon <- cc$pct_of_normal
+vb_color <- if (is.na(pon)) "warning" else if (pon < 50 || pon > 150) "danger" else if (pon < 75 || pon > 125) "warning" else "success"
+valueBox(ifelse(is.na(pon), "N/A", paste0(pon, "%")),
+         caption = "vs. historical median for this day", icon = "fa-percent", color = vb_color)
+```
+
+### Gage type
+
+```{r}
+valueBox(ifelse(gage$is_tributary, "Tributary", "Mainstem"),
+         caption = paste0(gage$location, ", ", gage$state), icon = "fa-map-marker", color = "info")
+```
+
+Row
+-----------------------------------------------------------------------
+
+### This water year vs. historical normal
+
+```{r}
+ggplotly(plot_hydrograph_vs_normal(
+  daily, stats,
+  title = paste(gage$river, "-", gage$common_name),
+  subtitle = if (gage$is_tributary) {
+    paste0("Tributary gage (not mainstem) - ", gage$location)
+  } else {
+    gage$location
+  }
+))
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Monthly climatology (last 10 yrs)
+
+```{r}
+ggplotly(plot_monthly_climatology(daily, title = gage$common_name, subtitle = "Monthly Q distribution, last 10 years"))
+```
+
+### Summertime (Jun 21 - Sep 21) mean, by year
+
+```{r}
+ggplotly(plot_summertime_trend(daily, title = gage$common_name, subtitle = "Summer mean discharge trend"))
+```
+
+Row
+-----------------------------------------------------------------------
+
+### Upstream snowpack: `r gage$snotel_label`
+
+```{r}
+if (is.null(swe)) {
+  plotly_empty() %>% layout(title = "Snowpack data unavailable")
+} else {
+  ggplotly(plot_snowpack_vs_normal(swe, title = gage$snotel_label, subtitle = "SWE this year vs. historical 25th-75th pctile"))
+}
+```
+
+### Full period of record
+
+```{r}
+ggplotly(plot_full_record(daily, title = gage$common_name, subtitle = paste0("Daily discharge, ", min(daily$year), "-", max(daily$year))))
+```
