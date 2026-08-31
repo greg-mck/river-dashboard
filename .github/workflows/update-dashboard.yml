@@ -9,7 +9,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   render:
@@ -37,16 +37,19 @@ jobs:
       - name: Render dashboard
         run: Rscript -e 'rmarkdown::render("dashboard.Rmd", output_file = "index.html", output_dir = "docs")'
 
-      - name: Commit and push updated dashboard
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/index.html
-          git diff --quiet --cached || git commit -m "Auto-update dashboard $(date -u +%Y-%m-%d)"
-          # Retry on push rejection (e.g. a concurrent run updated main first)
-          for i in 1 2 3 4 5; do
-            git push && break
-            git fetch origin main
-            git rebase origin/main
-            sleep $((RANDOM % 10 + 1))
-          done
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    needs: render
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
