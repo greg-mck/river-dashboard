@@ -24,7 +24,12 @@ gage_config <- tribble(
   "06752260",  "Cache la Poudre River", "Poudre (Fort Collins)", "Fort Collins, CO",            "CO",   FALSE,         551,        "Joe Wright SNOTEL (Poudre headwaters)",
   "06620000",  "North Platte River",   "North Platte (Northgate)", "Northgate, CO",             "CO",   FALSE,         1046,       "Cinnabar Park SNOTEL (North Park headwaters)",
   "06630000",  "North Platte River",   "North Platte (ab. Seminoe)", "above Seminoe Reservoir, near Sinclair, WY", "WY", FALSE, 1046, "Cinnabar Park SNOTEL (North Park headwaters)",
-  "06622700",  "North Brush Creek",    "Brush Creek (Saratoga area)", "near Saratoga, WY",       "WY",   TRUE,          1046,       "Cinnabar Park SNOTEL (North Park headwaters)"
+  "06622700",  "North Brush Creek",    "Brush Creek (Saratoga area)", "near Saratoga, WY",       "WY",   TRUE,          1046,       "Cinnabar Park SNOTEL (North Park headwaters)",
+  "09058000",  "Colorado River",       "Colorado (Kremmling)", "near Kremmling, CO",             "CO",   FALSE,         688,        "Phantom Valley SNOTEL (Colorado River headwaters, RMNP)",
+  "09239500",  "Yampa River",          "Yampa (Steamboat Springs)", "Steamboat Springs, CO",     "CO",   FALSE,         825,        "Tower SNOTEL (Yampa headwaters, Buffalo Pass)",
+  "09085000",  "Roaring Fork River",   "Roaring Fork (Glenwood Springs)", "Glenwood Springs, CO", "CO",  FALSE,         542,        "Independence Pass SNOTEL (Roaring Fork headwaters)",
+  "06719505",  "Clear Creek",          "Clear Creek (Golden)", "Golden, CO",                     "CO",   FALSE,         602,        "Loveland Basin SNOTEL (Clear Creek headwaters)",
+  "06701500",  "South Platte River",   "South Platte (Deckers)", "below Cheesman Reservoir, near Deckers, CO", "CO",   FALSE,      531,        "Hoosier Pass SNOTEL (South Platte headwaters, South Park)"
 )
 
 # Sanity check: fail loudly if a gage number is duplicated or malformed.

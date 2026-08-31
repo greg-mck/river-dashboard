@@ -17,6 +17,11 @@ branch > `main` / `docs`) and it'll be at
 | North Platte River, Northgate, CO | 06620000 | Mainstem | |
 | North Platte River, above Seminoe Reservoir, near Sinclair, WY | 06630000 | Mainstem | |
 | North Brush Creek, near Saratoga, WY | 06622700 | **Tributary** | Historically mislabeled "North Platte, Saratoga" in the old `.Rmd`. It's actually a small tributary, not the mainstem. The real North Platte-at-Saratoga gage (06627000) stopped recording discharge in 1970, so there's no active mainstem gage right at Saratoga — this is the nearest active gage to that reach. |
+| Colorado River, near Kremmling, CO | 09058000 | Mainstem | |
+| Yampa River, Steamboat Springs, CO | 09239500 | Mainstem | |
+| Roaring Fork River, Glenwood Springs, CO | 09085000 | Mainstem | |
+| Clear Creek, Golden, CO | 06719505 | Mainstem | |
+| South Platte River, below Cheesman Reservoir near Deckers, CO | 06701500 | Mainstem | |
 
 Add a gage by adding a row to `R/gage_config.R` — no new files needed.
 
@@ -26,6 +31,11 @@ Add a gage by adding a row to `R/gage_config.R` — no new files needed.
 |---|---|---|
 | Joe Wright | 551 | Poudre headwaters (Cameron Pass area) |
 | Cinnabar Park | 1046 | North Platte / North Park headwaters (used for all 3 North Platte-basin gages) |
+| Phantom Valley | 688 | Colorado River headwaters (Kawuneeche Valley, RMNP) |
+| Tower | 825 | Yampa headwaters (Buffalo Pass) |
+| Independence Pass | 542 | Roaring Fork headwaters |
+| Loveland Basin | 602 | Clear Creek headwaters (Loveland Pass) |
+| Hoosier Pass | 531 | South Platte headwaters (South Park) |
 
 Picked by pulling `snotelr::snotel_info()` and checking each candidate
 station's coordinates fall inside the right headwater drainage. SWE (and
