@@ -8,6 +8,10 @@
 # this writing the legacy services still work and return clean p05-p95
 # percentile columns that the new stats endpoint doesn't cleanly expose yet.
 # If readNWISdv()/readNWISstat() start failing, that's the migration to make.
+#
+# UPDATE (2026-10): dataRetrieval 2.7.27 made all NWIS functions error by
+# default. override_error = TRUE below is a stopgap; the NWIS servers go
+# offline 2027-02-22, so the migration has to happen before then.
 
 library(dataRetrieval)
 library(dplyr)
@@ -22,7 +26,8 @@ fetch_daily_discharge <- function(site_no, start_date = "1990-01-01") {
     siteNumber = site_no,
     parameterCd = "00060",
     startDate = start_date,
-    endDate = Sys.Date()
+    endDate = Sys.Date(),
+    override_error = TRUE
   ) %>%
     addWaterYear() %>%
     transmute(
@@ -46,7 +51,8 @@ fetch_daily_stats <- function(site_no) {
     siteNumbers = site_no,
     parameterCd = "00060",
     statReportType = "daily",
-    statType = c("p05", "p25", "p50", "p75", "p95")
+    statType = c("p05", "p25", "p50", "p75", "p95"),
+    override_error = TRUE
   )
   stats %>%
     transmute(
