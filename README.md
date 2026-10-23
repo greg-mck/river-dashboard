@@ -7,7 +7,7 @@ with one config-driven dashboard that auto-updates.
 
 **Live dashboard:** set up GitHub Pages (Settings > Pages > Deploy from
 branch > `main` / `docs`) and it'll be at
-`https://<your-github-username>.github.io/river-dashboard/`.
+`https://greg-mck.github.io/river-dashboard/`.
 
 ## Gages
 
